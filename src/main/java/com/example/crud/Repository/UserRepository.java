@@ -32,4 +32,8 @@ public class UserRepository {
         em.persist(user);
         return user;
     }
+
+    public List<User> findAll () {
+        return em.createQuery("SELECT u FROM User u").getResultList();
+    }
 }

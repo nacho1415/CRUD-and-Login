@@ -22,6 +22,8 @@ public class UserDataLoader implements CommandLineRunner {
         if (userRepository.countUser() == 0) {
             User user1 = userRepository.createUser(new UserDto("dasd", "asd", "dasd"));
             userRepository.save(user1);
+            User user2 = userRepository.createUser(new UserDto("dasd", "asd", "dasd"));
+            userRepository.save(user2);
             System.out.println(userRepository.countUser());
         }
     }
