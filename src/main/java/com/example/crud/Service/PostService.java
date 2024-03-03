@@ -20,4 +20,8 @@ public class PostService {
         postRepository.save(post);
         return post;
     }
+
+    public User signup () {
+
+    }
 }
