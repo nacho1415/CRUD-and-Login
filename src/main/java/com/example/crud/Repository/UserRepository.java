@@ -1,10 +1,12 @@
 package com.example.crud.Repository;
 
 import com.example.crud.Domain.User;
-import com.example.crud.UserDto.UserDto;
+import com.example.crud.Dto.UserDto.CreateUserDto;
+import com.example.crud.Dto.UserDto.SignupDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
@@ -13,15 +15,6 @@ public class UserRepository {
 
     @PersistenceContext
     EntityManager em;
-
-    public User createUser (UserDto userDto) {
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        user.setNickname(userDto.getNickname());
-        em.persist(user);
-        return user;
-    }
 
     public int countUser () {
         List<User> users = em.createQuery("SELECT u From User u").getResultList();
@@ -35,5 +28,12 @@ public class UserRepository {
 
     public List<User> findAll () {
         return em.createQuery("SELECT u FROM User u").getResultList();
+    }
+
+    public boolean DuplicateNicknameCheck (String nickname) {
+        Long count = em.createQuery("SELECT COUNT(u) FROM User u WHERE u.userName = :nickname", Long.class)
+                .setParameter("nickname", nickname)
+                .getSingleResult();
+        return count > 0;
     }
 }

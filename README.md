@@ -9,7 +9,7 @@ x 회원가입 : signup <br>
 
 Post: <br>
 o 전체 게시글 조회: findAllPost <br>
-x 게시글 생성 createPost - validation, 예외처리 필요 <br>
+x 게시글 생성 createPost --- validation, 예외처리 필요 <br>
 x 게시글 수정 updatePost <br>
 x 게시글 삭제 deletePost <br>
 <br>
