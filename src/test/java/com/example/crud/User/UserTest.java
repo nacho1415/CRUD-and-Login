@@ -2,10 +2,12 @@ package com.example.crud.User;
 
 import com.example.crud.Domain.User;
 import com.example.crud.Dto.UserDto.CreateUserDto;
+import com.example.crud.Dto.UserDto.LoginDto;
 import com.example.crud.Dto.UserDto.SignupDto;
 import com.example.crud.Exception.User.DuplicateNicknameException;
 import com.example.crud.Repository.UserRepository;
 import com.example.crud.Service.UserService;
+import org.apache.juli.logging.Log;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +35,9 @@ public class UserTest {
     public void 임시닉네임조회 () throws DuplicateNicknameException {
         SignupDto signupDto = new SignupDto("eqwe312@naver.com", "123", "minseo1241412", "dasd");
         userService.signup(signupDto);
+    }
+
+    public void 로그인 () {
+        LoginDto loginDto = new LoginDto()
     }
 }

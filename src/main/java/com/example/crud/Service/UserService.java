@@ -60,10 +60,10 @@ public class UserService {
     public String login (LoginDto loginDto) {
         try {
             validateLoginDto(loginDto);
+            return "Login successful";
         } catch (IllegalArgumentException e) {
             return "Login failed: " + e.getMessage();
         }
-        
 
     }
 
