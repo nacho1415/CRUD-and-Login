@@ -23,9 +23,6 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String userName;
-
-    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -43,9 +40,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List <Like> likes = new ArrayList<>();
 
-    public void setUsername(String username) {
-        this.userName = username;
+    public Long getId() {
+        return this.id;
     }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public String getNickname() { return this.nickname; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
 
@@ -54,13 +57,13 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.email = password;
+        this.email = email;
     }
 
     public void ValidateSignupDto(SignupDto signupDto) {
-        if (signupDto.getUserName() == null ||
-                signupDto.getUserName().length() < MIN_USERNAME_LENGTH ||
-                signupDto.getUserName().length() > MAX_USERNAME_LENGTH) {
+        if (signupDto.getNickname()== null ||
+                signupDto.getNickname().length() < MIN_USERNAME_LENGTH ||
+                signupDto.getNickname().length() > MAX_USERNAME_LENGTH) {
             throw new IllegalArgumentException("Invalid username");
         }
         if (signupDto.getEmail() == null) {

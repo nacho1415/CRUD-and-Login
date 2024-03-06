@@ -7,7 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class SignupDto {
     String email;
-    String userName;
     String password;
     String nickname;
 }

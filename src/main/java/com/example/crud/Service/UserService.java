@@ -4,13 +4,17 @@ import com.example.crud.Domain.User;
 import com.example.crud.Dto.UserDto.LoginDto;
 import com.example.crud.Dto.UserDto.SignupDto;
 import com.example.crud.Exception.User.DuplicateNicknameException;
+import com.example.crud.JWT.JwtTokenProvider;
 import com.example.crud.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
@@ -22,6 +26,9 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public User signup (SignupDto signupDto) throws DuplicateNicknameException {
@@ -35,8 +42,8 @@ public class UserService {
         //validate 체크
         user.ValidateSignupDto(signupDto);
 
-        user.setUsername(signupDto.getUserName());
-        user.setPassword(signupDto.getPassword());
+        String encryptionPassword = passwordEncoder.encode(signupDto.getPassword());
+        user.setPassword(encryptionPassword);
         user.setEmail(signupDto.getEmail());
         user.setNickname(signupDto.getNickname());
 
@@ -57,14 +64,27 @@ public class UserService {
             throw new IllegalArgumentException("Invalid password");
         }
     }
-    public String login (LoginDto loginDto) {
+    public Map<String, Object> login (LoginDto loginDto) {
+        Map<String, Object> response = new HashMap<>();
+
         try {
             validateLoginDto(loginDto);
-            return "Login successful";
+            User user = userRepository.findByEmail(loginDto.getEmail());
+            if (user == null) {
+                throw new IllegalArgumentException("cannot find email");
+            }
+            Long userId = user.getId();
+            if (userRepository.isSamePassword(user.getPassword(), loginDto.getPassword())) {
+                throw new IllegalArgumentException("password is wrong");
+            }
+            JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+            String token = jwtTokenProvider.generateToken(user.getNickname());
+
+            response.put("token", token);
+            response.put("user", user);
+            return response;
         } catch (IllegalArgumentException e) {
-            return "Login failed: " + e.getMessage();
+            return response;
         }
-
     }
-
 }
