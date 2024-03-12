@@ -2,9 +2,9 @@
 
 User: <br>
 o 전체 유저 조회: findAllUser <br>
-x 로그인 : login <br>
+o 로그인 : login <br>
 x 로그아웃 : logout <br>
-x 회원가입 : signup <br>
+o 회원가입 : signup <br>
 <br>
 
 Post: <br>

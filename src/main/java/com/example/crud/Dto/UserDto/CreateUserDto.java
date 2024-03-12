@@ -3,8 +3,9 @@ package com.example.crud.Dto.UserDto;
 import com.example.crud.Domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class CreateUserDto {
 

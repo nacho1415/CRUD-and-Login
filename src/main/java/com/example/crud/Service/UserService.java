@@ -28,6 +28,9 @@ public class UserService {
     UserRepository userRepository;
 
     @Autowired
+    JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -77,13 +80,15 @@ public class UserService {
             if (userRepository.isSamePassword(user.getPassword(), loginDto.getPassword())) {
                 throw new IllegalArgumentException("password is wrong");
             }
-            JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
-            String token = jwtTokenProvider.generateToken(user.getNickname());
+            String token = jwtTokenProvider.generateToken(user.getEmail());
 
             response.put("token", token);
             response.put("user", user);
+            System.out.println("성공");
             return response;
         } catch (IllegalArgumentException e) {
+            System.out.println("실패");
+            System.out.println(e.getMessage());
             return response;
         }
     }

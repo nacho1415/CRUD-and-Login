@@ -1,67 +1,65 @@
 package com.example.crud.JWT;
 
+import com.example.crud.Domain.User;
+import com.example.crud.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    // 임의로 선택한 시크릿 키
-    private static final String SECRET_KEY = "secretkey";
+    JwtParser parser;
+
+    @Autowired
+    UserRepository userRepository;
 
     // 토큰의 만료 시간 (1시간)
-    private static final long EXPIRATION_TIME = 3600000;
+    private static final long EXPIRATION_TIME = 360000000;
+
+    @Value("${spring.jwt.secret}")
+    private String jwtSecret;
+
+
+    public Key getJwtSecret() {
+        // 문자열을 바이트 배열로 변환하여 Key 형식으로 반환
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
 
     // JWT 토큰 생성
-    public static String generateToken(String nickname) {
+    public String generateToken(String email) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
-
         return Jwts.builder()
-                .setSubject(nickname)
+                .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .signWith(getJwtSecret())
                 .compact();
     }
 
-    // JWT 토큰에서 username 추출
-    public static String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
-    }
-
     // JWT 토큰의 유효성 검사
-    public static boolean validateToken(String token) {
+    public User validateToken(String token) throws Exception {
         try {
-            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-            return true;
+            token = token.replaceAll("^\"|\"$", "");
+            jwtSecret = jwtSecret.replaceAll("^\"|\"$", "");
+            System.out.println(token + "확인1111111");
+            System.out.println(jwtSecret + "확인222222");
+            this.parser = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build();
+            Claims claims = parser.parseClaimsJws(token).getBody();
+            String email = claims.getSubject(); // 토큰에서 이메일 추출
+            System.out.println();
+            User user = userRepository.findByEmail(email);
+            return user;
         } catch (Exception e) {
-            return false;
+            System.out.println(e.getMessage());
+            throw new Exception("JWT 인증에 실패하셨습니다");
         }
-    }
-
-    public static void main(String[] args) {
-        // 사용자 이름으로 토큰 생성
-        String token = generateToken("user123");
-
-        // 생성된 토큰 출력
-        System.out.println("Generated Token: " + token);
-
-        // 토큰에서 사용자 이름 추출 및 출력
-        String username = getUsernameFromToken(token);
-        System.out.println("Username from Token: " + username);
-
-        // 유효한 토큰 검증
-        boolean isValid = validateToken(token);
-        System.out.println("Token is valid: " + isValid);
     }
 }

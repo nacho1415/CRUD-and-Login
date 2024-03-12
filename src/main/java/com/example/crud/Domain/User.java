@@ -1,6 +1,7 @@
 package com.example.crud.Domain;
 
 import com.example.crud.Dto.UserDto.SignupDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -31,12 +32,15 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List <Comment> comments = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List <Like> likes = new ArrayList<>();
 
@@ -46,6 +50,10 @@ public class User {
 
     public String getPassword() {
         return this.password;
+    }
+
+    public String getEmail() {
+        return this.email;
     }
 
     public String getNickname() { return this.nickname; }
